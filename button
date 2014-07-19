@@ -1,0 +1,11 @@
+function redraw()
+
+end
+
+function drawButton(name, x, y, width, height, text, color, activeColor, toggle-able, actived-time, OnClickedFucntion, OnInactiveFunction, Is-activated)
+
+end
+
+function checkButton(buttonName)
+	
+end
