@@ -1,72 +1,43 @@
-mon = peripheral.find("monitor")
+i=0
+repeat
+	mon = peripheral.find("monitor")
+	if not mon then
+		i = i+1
+		print("Checking monitor availabilty every second | "..tostring(20-i).."seconds left before exiting")
+		print("Please ensure you have plugged one in !")
+		sleep(1)
+		term.clear()
+		term.setCursorPos(1,1)
+	end
+until mon or i==20
 
-function drawButton(buttonName)
-	monSizeX, monSizeY = mon.getSize()
-	xmax = buttonName.x+buttonName.width, ymax = buttonName.y+buttonName.height
-	if buttonName.x<monSizeX and buttonName.y<monSizeY and xmax<monSizeX and ymax<monSizeY then
-		mon.setCursorPos(buttonName.x,buttonName.y)
-		mon.setBckgroundColor(buttonName.color)
+function draw(...)
+	button = arg
+	monX, monY = mon.getSize()
+	xmax = button.x+width
+	ymax = button.y+height
+	if button.x<monX and button.y<monY and xmax<monX and ymax<monY then
+		mon.setCursorPos(button.x,button.y)
+		mon.setBackgroundColor(button.color)
 		repeat
-			repeat
-				mon.setBackgroundColor(buttonName.color)
-				buttonName.x++
-			until buttonName.x==xmax
-			mon.setCursorPos(buttonName.x,buttonName.y+1)
-		until buttonName.y==ymax
+			mon.setBackgroundColor(button.color)
+			button.x = button.x+1
+		until button==xmax
+			y=y+1
+	until button.y==ymax
 	else
 		mon.write("Please review your Button dimentions, they exceed monitor size !")
 	end
-	mon.setCursorPos(buttonName.x+buttonName.height/2,buttonName.y+string.len(buttonName.text)/2)
-	mon.write(buttonName.text)
-	checkButton(buttonName)
 end
 
-function redraw(buttonName)
-	if buttonName.isActivated then
-		repeat
-			repeat
-				mon.setBackgroundColor(buttonName.activeColor)
-				buttonName.x++
-			until buttonName.x==xmax
-			mon.setCursorPos(buttonName.x,buttonName.y+1)
-		until buttonName.y==ymax
-	else if not buttonName.isActivated then
-		repeat
-			repeat
-				mon.setBackgroundColor(buttonName.Color)
-				buttonName.x++
-			until buttonName.x==xmax
-			mon.setCursorPos(buttonName.x,buttonName.y+1)
-		until buttonName.y==ymax
-	end
+function createToggle()
+	
 end
 
-function checkButton(buttonName)
-	while true do
-		event, side, posX, posY = os.pullEvent()
-		if event == "monitor_touch"
-			if posX>buttonName.x and posX<xmax and posY>buttonName.y and posY<buttonName.ymax then
-				if buttonName.toggleAble and not buttonName.isActivated then
-					_G[buttonName.OnClickedFunction]()
-					buttonName.isActivated = true
-					redraw(buttonName)
-				else if buttonName.toggleAble and buttonName.isActivated then
-					_G[buttonName.OnInactiveFunction]()
-					buttonName.isActivated = false
-					redraw(buttonName)
-				else if not buttonName.toggleAble and activedTime then
-					_G[buttonName.OnClickedFunction]()
-					buttonName.isActivated = true
-					redraw(buttonName)
-					sleep(buttonName.activedTime)
-					_G[buttonName.OnInactiveFunction]()
-					buttonName.isActivated = false
-					redraw(buttonName)
-				end
-			end
-		end
-	end
+function createTimedButton()
+
 end
-test = {10, 10, 20, 5, "test", colors.red, colors.green, true, "", hello, bye, false}
---drawButton(buttonName{x, y, width, height, text, color, activeColor, toggleAble, activedTime, OnClickedFunction, OnInactiveFunction, isActivated})
-drawButton(test)
+
+function checkButton()
+
+end
