@@ -9,10 +9,3 @@ end
 function checkButton(buttonName)
 
 end
-
-function help()
-	print("Usage : drawButton(name, x, y, width, height, text, color, activeColor, toggle-able, actived-time, OnClickedFucntion, OnInactiveFunction, Is-activated)")
-	print("Value : drawButton(string, number, number, number, number, string, color, color, boolean, number, function, function, boolean)") 
-end
-
-help()
