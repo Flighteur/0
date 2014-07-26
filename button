@@ -13,21 +13,24 @@ until mon or i==20
 
 function draw(...)
 	arg = unpack(arg)
+	x_ori = arg.x
+	y_ori = arg.y
 	monX, monY = mon.getSize()
 	xmax = arg.x+arg.width
 	ymax = arg.y+arg.height
 	if arg.x<monX and arg.y<monY and xmax<monX and ymax<monY then
 		repeat
-			sleep(0.1)
-			mon.setCursorPos(arg.x,arg.y)
-			mon.setBackgroundColor(arg.color)
+			mon.setCursorPos(arg.x, arg.y)
 			repeat
-				sleep(0.1)
 				mon.setBackgroundColor(arg.color)
+				mon.write(" ")
 				arg.x = arg.x+1
 			until arg.x==xmax
 			arg.y=arg.y+1
+			arg.x= x_ori
 		until arg.y==ymax
+		mon.setCursorPos(x_ori+arg.width/2-string.len(arg.text)/2, y_ori+arg.height/2)
+		mon.write(arg.text)
 	else
 		mon.write("Please review your Button dimentions, they exceed monitor size !")
 	end
@@ -45,5 +48,5 @@ function checkButton()
 
 end
 
-button={x=10, y=5, color=colors.red, width=10, height=5}
+button={x=10, y=5, color=colors.red, width=10, height=5, text='test'}
 draw(button)
