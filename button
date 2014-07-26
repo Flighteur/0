@@ -80,5 +80,5 @@ end
 
 
 clearScreen()
-createButton({x=10, y=5, color=colors.red, width=10, height=5, text="Button 1", TA=false, timed=1})
-createButton({x=30, y=8, color=colors.orange, width=15, height=7, text="Button 2", timed=true, TA=false})
+createButton({x=10, y=5, color=colors.red, width=10, height=5, text="Button 1", TA=true, timed=false})
+--createButton({x=30, y=8, color=colors.orange, width=15, height=7, text="Button 2", timed=true, TA=false})
