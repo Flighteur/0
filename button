@@ -11,13 +11,19 @@ repeat
 	end
 until mon or i==20
 
+function clearScreen()
+	mon.setBackgroundColor(colors.black)
+	mon.clear()
+end
+
 function draw(...)
+	--Args for the function : {x,y,color,width,height,text}
 	arg = unpack(arg)
+	monX, monY = mon.getSize()
 	x_ori = arg.x
 	y_ori = arg.y
-	monX, monY = mon.getSize()
-	xmax = arg.x+arg.width
-	ymax = arg.y+arg.height
+	xmax = x_ori+arg.width
+	ymax = y_ori+arg.height
 	if arg.x<monX and arg.y<monY and xmax<monX and ymax<monY then
 		repeat
 			mon.setCursorPos(arg.x, arg.y)
@@ -31,22 +37,48 @@ function draw(...)
 		until arg.y==ymax
 		mon.setCursorPos(x_ori+arg.width/2-string.len(arg.text)/2, y_ori+arg.height/2)
 		mon.write(arg.text)
+		mon.setCursorPos(x_ori, y_ori)
+		arg.x = x_ori
+		arg.y = y_ori
 	else
 		mon.write("Please review your Button dimentions, they exceed monitor size !")
 	end
 end
 
-function createToggle()
-	
+function createButton(...)
+	--Args for the function : {x,y,color,width,height,text, timed, TA}
+	arg = unpack(arg)
+	draw(arg)
+	while true do
+		event, side, touchX, touchY = os.pullEvent()
+		if event=="monitor_touch" then
+			if tonumber(touchX)>x_ori and tonumber(touchX)<xmax and tonumber(touchY)>y_ori and tonumber(touchY)<ymax then
+				if arg.TA and not arg.timed then
+					if not active then
+						arg.color = colors.green
+						draw(arg)
+						active = true
+					else
+						arg.color = colors.red
+						draw(arg)
+						active = false
+					end
+				else if not arg.TA then
+					arg.color = colors.green
+					draw(arg)
+					sleep(timed)
+					arg.color = colors.red
+					draw(arg)
+				end
+			end
+		end
+		sleep(0.1)
+	end
+end
 end
 
-function createTimedButton()
 
-end
 
-function checkButton()
-
-end
-
-button={x=10, y=5, color=colors.red, width=10, height=5, text='test'}
-draw(button)
+clearScreen()
+createButton({x=10, y=5, color=colors.red, width=10, height=5, text="Button 1", TA=false, timed=1})
+createButton({x=30, y=8, color=colors.orange, width=15, height=7, text="Button 2", timed=true, TA=false})
