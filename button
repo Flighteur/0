@@ -70,7 +70,7 @@ function check()
 						print("t5")
 						if content.TA then
 							if not active then
-								local colorTemp = content.color
+								colorTemp = content.color
 								content.color = colors.green
 								draw(content)
 								active = true
