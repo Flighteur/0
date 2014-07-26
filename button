@@ -1,4 +1,7 @@
-i=0
+i = 0
+tableCount = 0
+buttons = {}
+
 repeat
 	mon = peripheral.find("monitor")
 	if not mon then
@@ -20,26 +23,24 @@ function draw(...)
 	--Args for the function : {x,y,color,width,height,text}
 	arg = unpack(arg)
 	monX, monY = mon.getSize()
-	x_ori = arg.x
-	y_ori = arg.y
-	xmax = x_ori+arg.width
-	ymax = y_ori+arg.height
-	if arg.x<monX and arg.y<monY and xmax<monX and ymax<monY then
+	posX = arg.x
+	posY = arg.y
+	if arg.x<monX and arg.y<monY and arg.xmax<monX and arg.ymax<monY then
 		repeat
-			mon.setCursorPos(arg.x, arg.y)
+			mon.setCursorPos(posX, posY)
 			repeat
 				mon.setBackgroundColor(arg.color)
 				mon.write(" ")
-				arg.x = arg.x+1
-			until arg.x==xmax
-			arg.y=arg.y+1
-			arg.x= x_ori
-		until arg.y==ymax
-		mon.setCursorPos(x_ori+arg.width/2-string.len(arg.text)/2, y_ori+arg.height/2)
+				posX = posX+1
+			until posX==arg.xmax
+			posY = posY+1
+			posX = arg.x
+		until posY == arg.ymax
+		mon.setCursorPos((arg.x+arg.xmax)/2-string.len(arg.text)/2, (arg.y+arg.ymax)/2)
 		mon.write(arg.text)
-		mon.setCursorPos(x_ori, y_ori)
-		arg.x = x_ori
-		arg.y = y_ori
+		mon.setCursorPos(arg.x, arg.y)
+		posX = arg.x
+		posY = arg.y
 	else
 		mon.write("Please review your Button dimentions, they exceed monitor size !")
 	end
@@ -49,36 +50,53 @@ function createButton(...)
 	--Args for the function : {x,y,color,width,height,text, timed, TA}
 	arg = unpack(arg)
 	draw(arg)
+	tableCount = tableCount+1
+	table.insert(buttons, tableCount, arg)
+	return buttons
+end
+
+function check()
 	while true do
+		print("t1")
 		event, side, touchX, touchY = os.pullEvent()
-		if event=="monitor_touch" then
-			if tonumber(touchX)>x_ori and tonumber(touchX)<xmax and tonumber(touchY)>y_ori and tonumber(touchY)<ymax then
-				if arg.TA and not arg.timed then
-					if not active then
-						arg.color = colors.green
-						draw(arg)
-						active = true
-					else
-						arg.color = colors.red
-						draw(arg)
-						active = false
+		print("t2")
+		if event == "monitor_touch" then
+			print("t3")
+			for name, content in pairs(buttons) do
+				print(tostring(name).." "..(content.x))
+				if touchX>=content.x and touchX <= content.xmax then
+					print("t4")
+					if touchY>=content.y and touchY <= content.ymax then
+						print("t5")
+						if content.TA then
+							if not active then
+								local colorTemp = content.color
+								content.color = colors.green
+								draw(content)
+								active = true
+							else
+								content.color = colorTemp
+								draw(content)
+								active = false
+							end
+						else if not content.TA then
+							local colorTemp = content.color
+							content.color = colors.green
+							draw(content)
+							sleep(content.timed)
+							content.color = colorTemp
+							draw(content)
+						end
 					end
-				else if not arg.TA then
-					arg.color = colors.green
-					draw(arg)
-					sleep(timed)
-					arg.color = colors.red
-					draw(arg)
 				end
 			end
 		end
-		sleep(0.1)
 	end
 end
 end
 
 
-
 clearScreen()
-createButton({x=10, y=5, color=colors.red, width=10, height=5, text="Button 1", TA=true, timed=false})
---createButton({x=30, y=8, color=colors.orange, width=15, height=7, text="Button 2", timed=true, TA=false})
+createButton({x=10, y=5, color=colors.red, xmax=20, ymax=10, text="Button 1", TA=true, timed=false})
+createButton({x=30, y=8, color=colors.orange, xmax=45, ymax=15, text="Button 2", TA=false, timed=1,})
+check()
